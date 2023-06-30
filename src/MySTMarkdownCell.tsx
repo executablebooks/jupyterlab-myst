@@ -40,6 +40,7 @@ export class MySTMarkdownCell
       model: this._mystModel,
       rendermime: this._notebookRendermime,
       linkHandler: this._notebookRendermime.linkHandler ?? undefined,
+      latexTypesetter: this._notebookRendermime.latexTypesetter ?? undefined,
       resolver: this._attachmentsResolver,
       trusted: this.model.trusted
     });

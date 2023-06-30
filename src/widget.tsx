@@ -2,7 +2,7 @@ import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ISignal, Signal } from '@lumino/signaling';
 import { FrontmatterBlock } from '@myst-theme/frontmatter';
 import { VDomModel, VDomRenderer } from '@jupyterlab/apputils';
-import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import { ILatexTypesetter, IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { References } from 'myst-common';
 import { PageFrontmatter } from 'myst-frontmatter';
 import {
@@ -22,6 +22,7 @@ import {
 import { renderers } from './renderers';
 import { IUserExpressionMetadata } from './metadata';
 import { linkFactory } from './links';
+import { TypesetterProvider } from './typesetterProvider';
 
 /**
  * The MIME type for Markdown.
@@ -88,6 +89,7 @@ export interface IMySTOptions {
   model?: IMySTModel;
   resolver?: IRenderMime.IResolver;
   linkHandler?: IRenderMime.ILinkHandler;
+  latexTypesetter?: IRenderMime.ILatexTypesetter;
   rendermime?: IRenderMimeRegistry;
   trusted?: boolean;
 }
@@ -102,21 +104,23 @@ export class MySTWidget extends VDomRenderer<IMySTModel> {
    * @param options - The options for initializing the widget.
    */
   constructor(options: IMySTOptions) {
-    const { model, resolver, linkHandler, rendermime, trusted } = options;
+    const { model, resolver, rendermime, trusted, latexTypesetter } = options;
     super(model);
 
     this._resolver = resolver;
-    this._linkHandler = linkHandler;
     this._rendermime = rendermime;
     this._trusted = trusted;
+    this._latexTypesetter = latexTypesetter;
     this.addClass('myst');
 
     this._taskItemController = change => this._taskItemChanged.emit(change);
   }
 
   private _trusted?: boolean = false;
+  private readonly _typesetter?: ILatexTypesetter;
   private readonly _resolver?: IRenderMime.IResolver;
   private readonly _linkHandler?: IRenderMime.ILinkHandler;
+  private readonly _latexTypesetter?: IRenderMime.ILatexTypesetter;
   private readonly _rendermime?: IRenderMimeRegistry;
   private readonly _taskItemChanged = new Signal<this, ITaskItemChange>(this);
   private readonly _taskItemController: ITaskItemController;
@@ -148,29 +152,33 @@ export class MySTWidget extends VDomRenderer<IMySTModel> {
     const children = useParse(mdast || null, renderers);
 
     return (
-      <TaskItemControllerProvider controller={this._taskItemController}>
-        <ThemeProvider
-          theme={Theme.light}
-          Link={linkFactory(this._resolver, this._linkHandler)}
-          renderers={renderers}
-        >
-          <UserExpressionsProvider
-            expressions={expressions}
-            rendermime={this._rendermime}
-            trusted={this._trusted}
+      <TypesetterProvider typesetter={this._latexTypesetter}>
+        <TaskItemControllerProvider controller={this._taskItemController}>
+          <ThemeProvider
+            theme={Theme.light}
+            Link={linkFactory(this._resolver, this._linkHandler)}
+            renderers={renderers}
           >
-            <TabStateProvider>
-              <ReferencesProvider
-                references={references}
-                frontmatter={frontmatter}
-              >
-                {frontmatter && <FrontmatterBlock frontmatter={frontmatter} />}
-                {children}
-              </ReferencesProvider>
-            </TabStateProvider>
-          </UserExpressionsProvider>
-        </ThemeProvider>
-      </TaskItemControllerProvider>
+            <UserExpressionsProvider
+              expressions={expressions}
+              rendermime={this._rendermime}
+              trusted={this._trusted}
+            >
+              <TabStateProvider>
+                <ReferencesProvider
+                  references={references}
+                  frontmatter={frontmatter}
+                >
+                  {frontmatter && (
+                    <FrontmatterBlock frontmatter={frontmatter} />
+                  )}
+                  {children}
+                </ReferencesProvider>
+              </TabStateProvider>
+            </UserExpressionsProvider>
+          </ThemeProvider>
+        </TaskItemControllerProvider>
+      </TypesetterProvider>
     );
   }
 }

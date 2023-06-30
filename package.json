@@ -61,6 +61,7 @@
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/codeeditor": "^4.0.0",
     "@jupyterlab/markdownviewer": "^4.0.0",
+    "@jupyterlab/mathjax-extension": "^4.0.0",
     "@jupyterlab/notebook": "^4.0.0",
     "@jupyterlab/rendermime": "^4.0.0",
     "@jupyterlab/translation": "^4.0.0",
