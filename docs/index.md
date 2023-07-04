@@ -48,15 +48,15 @@ We can compute the total: 6 and the maximum value is 3.
 
 You can also use this with `ipywidgets`, and have inline interactive text:
 
-![](./images/cookies.gif)
+![](../images/cookies.gif)
 
 Or with `matplotlib` to show inline spark-lines:
 
-![](./images/stock-price.gif)
+![](../images/stock-price.gif)
 
 You can also edit tasklists directly in the rendered markdown.
 
-![](./images/tasklists-in-jupyterlab.gif)
+![](../images/tasklists-in-jupyterlab.gif)
 
 ## Usage
 
