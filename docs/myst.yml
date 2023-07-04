@@ -1,8 +1,8 @@
 # See docs at: https://myst-tools.org/docs/mystjs/frontmatter
 version: 1
 project:
-  # title:
-  # description:
+  title: jupyterlab-myst
+  description: Write MyST in Juptyerlab notebooks. This extension replaces the default markdown rendering enabling the rich features of MyST to be used in Mardkown cells.
   keywords: []
   authors: []
   github: https://github.com/executablebooks/jupyterlab-myst
@@ -12,7 +12,7 @@ site:
   # title:
   # logo:
   projects:
-    - slug: myst
+    - slug: jupyterlab
       path: .
   nav: []
   actions:
