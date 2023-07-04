@@ -1,15 +1,15 @@
 ---
 title: MyST extension for JupyterLab
-description: The MyST (Markedly Structured Text) JupyterLab extension switches the default markdown rendering in JuptyerLab to `mystjs`. Allowing notebook authors to create richer content using MyST rols and directives alongide plain markdown to create notebook based content from technical tutorials though to publication-quality documents with bibliography support.
+description: The MyST Markdown JupyterLab extension switches the default markdown rendering in JupyterLab to MyST. Allowing notebook authors to create richer content using MyST roles and directives alongside plain markdown to create notebook based content from technical tutorials though to publication-quality documents with bibliography support.
 ---
 
-Render markdown cells using [MyST Markdown](https://myst-tools.org/), including support for rich frontmatter, interactive references, admonitions, figure numbering, tabs, cards, and grids!
+Render markdown cells using [MyST Markdown](https://mystmd.org/), including support for rich frontmatter, interactive references, admonitions, figure numbering, tabs, cards, and grids!
 
 ![](../images/walkthrough.gif)
 
 ## Requirements
 
-- JupyterLab >= 3.0
+- JupyterLab >= 4.0
 
 ## Install
 
@@ -21,7 +21,7 @@ pip install jupyterlab_myst
 
 ## Features
 
-`jupyterlab-myst` is a fully featured markdown renderer for technical documents, [get started with MyST Markdown](https://myst-tools.org/docs/mystjs/quickstart-myst-markdown). It supports the MyST `{eval}` inline role, which facilitates the interweaving of code outputs and prose. For example, we can use inline expressions to explore the properties of a NumPy array.
+`jupyterlab-myst` is a fully featured markdown renderer for technical documents, [get started with MyST Markdown](https://mystmd.org/docs/mystjs/quickstart-myst-markdown). It supports the MyST `{eval}` inline role, which facilitates the interweaving of code outputs and prose. For example, we can use inline expressions to explore the properties of a NumPy array.
 
 In the code cell:
 
