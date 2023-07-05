@@ -54,21 +54,13 @@ Or with `matplotlib` to show inline spark-lines:
 
 ![](../images/stock-price.gif)
 
-You can also edit tasklists directly in the rendered markdown.
+You can also edit task-lists directly in the rendered markdown.
 
 ![](../images/tasklists-in-jupyterlab.gif)
 
 ## Usage
 
-[MyST][myst-quickstart] is a flavour of Markdown, which combines the fluid experience of writing Markdown with the programmable extensibility of reStructuredText. This extension for JupyterLab makes it easier to develop rich, computational narratives, technical documentation, and open scientific communication.
-
-### Restore default renderer 📘
-
-By default, the MyST renderer becomes the default notebook renderer. This means that MyST notebook rendering works out-of-the-box with Jupytext and other notebook-aware extensions. Whilst this extension is in a pre-release state, there is also a "legacy mode" that integrates MyST rendering as an additional `Open With` option that does not replace the default notebook renderer. To enable legacy mode, disable the `jupyterlab-myst:plugin` plugin with:
-
-```bash
-jupyter labextension disable jupyterlab-myst:plugin
-```
+[MyST][myst-quickstart] is a flavour of Markdown, which combines the experience of writing Markdown with the programmable extensibility of reStructuredText. This extension for JupyterLab makes it easier to develop rich, computational narratives, technical documentation, and open scientific communication.
 
 ### Execution 🚀
 
@@ -89,7 +81,7 @@ To facilitate this extension of the trust model, the `jupyterlab_myst` server ex
 jupyter server extension disable jupyterlab-myst
 ```
 
-By disabling this extension, it will not be possible to render unsafe expression results from inline expressions; the `MySTNotebookNotary` adds additional code that makes it possible to mark Markdown cells as trusted.
+The `MySTNotebookNotary` adds additional code that makes it possible to mark Markdown cells as trusted.
 
 ## Uninstall
 
