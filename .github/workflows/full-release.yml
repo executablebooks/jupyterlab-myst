@@ -1,19 +1,29 @@
-name: "Step 2: Publish Release"
+name: "Steps 1 + 2: Full Release"
 on:
   workflow_dispatch:
     inputs:
+      version_spec:
+        description: "New Version Specifier"
+        default: "next"
+        required: false
       branch:
-        description: "The target branch"
+        description: "The branch to target"
         required: false
-      release_url:
-        description: "The URL of the draft GitHub release"
+      post_version_spec:
+        description: "Post Version Specifier"
         required: false
+      since:
+        description: "Use PRs with activity since this date or git reference"
+        required: false
+      since_last_stable:
+        description: "Use PRs with activity since the last stable git tag"
+        required: false
+        type: boolean
       steps_to_skip:
-        description: "Comma separated list of steps to skip"
+        description: "Comma separated list of steps to skip during Populate Release"
         required: false
-
 jobs:
-  publish_release:
+  full_release:
     runs-on: ubuntu-latest
     permissions:
       # This is useful if you want to use PyPI trusted publisher
@@ -22,13 +32,24 @@ jobs:
     steps:
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
+      - name: Prep Release
+        id: prep-release
+        uses: jupyter-server/jupyter_releaser/.github/actions/prep-release@v2
+        with:
+          token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          version_spec: ${{ github.event.inputs.version_spec }}
+          post_version_spec: ${{ github.event.inputs.post_version_spec }}
+          branch: ${{ github.event.inputs.branch }}
+          since: ${{ github.event.inputs.since }}
+          since_last_stable: ${{ github.event.inputs.since_last_stable }}
+
       - name: Populate Release
         id: populate-release
         uses: jupyter-server/jupyter_releaser/.github/actions/populate-release@v2
         with:
           token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           branch: ${{ github.event.inputs.branch }}
-          release_url: ${{ github.event.inputs.release_url }}
+          release_url: ${{ steps.prep-release.outputs.release_url }}
           steps_to_skip: ${{ github.event.inputs.steps_to_skip }}
 
       - name: Finalize Release
@@ -49,9 +70,3 @@ jobs:
         run: |
           echo "Verify the final release"
           echo ${{ steps.finalize-release.outputs.release_url }}
-
-      - name: "** Failure Message **"
-        if: ${{ failure() }}
-        run: |
-          echo "Failed to Publish the Draft Release Url:"
-          echo ${{ steps.populate-release.outputs.release_url }}

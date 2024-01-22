@@ -41,7 +41,8 @@ export class MySTMarkdownCell
       rendermime: this._notebookRendermime,
       linkHandler: this._notebookRendermime.linkHandler ?? undefined,
       resolver: this._attachmentsResolver,
-      trusted: this.model.trusted
+      trusted: this.model.trusted,
+      sanitizer: this._notebookRendermime.sanitizer ?? undefined
     });
     this._mystWidget.taskItemChanged.connect((caller, change) =>
       this.setTaskItem(caller, change)

@@ -5,7 +5,10 @@
 
 /* This is a highly simplified version of https://tailwindcss.com/docs/preflight to work with JupyterLab */
 
-.myst * {
+.myst
+  :where(*):not(
+    :where([class~='jp-RenderedHTMLCommon'], [class~='jp-RenderedHTMLCommon'] *)
+  ) {
   box-sizing: border-box; /* 1 */
   border-width: 0; /* 2 */
   border-style: solid; /* 2 */
@@ -21,17 +24,26 @@
 2. Remove default button styles.
 */
 
-.myst button {
+.myst
+  :where(button):not(
+    :where([class~='jp-RenderedHTMLCommon'], [class~='jp-RenderedHTMLCommon'] *)
+  ) {
   -webkit-appearance: button; /* 1 */
   background-color: transparent; /* 2 */
   background-image: none; /* 2 */
 }
 
-.myst img {
+.myst
+  :where(img):not(
+    :where([class~='jp-RenderedHTMLCommon'], [class~='jp-RenderedHTMLCommon'] *)
+  ) {
   max-width: 100%;
 }
 
-.myst figure img {
+.myst
+  :where(figure img):not(
+    :where([class~='jp-RenderedHTMLCommon'], [class~='jp-RenderedHTMLCommon'] *)
+  ) {
   display: block;
   max-width: 100%;
 }

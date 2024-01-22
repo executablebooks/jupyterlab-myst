@@ -1,7 +1,7 @@
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ISignal, Signal } from '@lumino/signaling';
 import { FrontmatterBlock } from '@myst-theme/frontmatter';
-import { VDomModel, VDomRenderer } from '@jupyterlab/apputils';
+import { ISanitizer, VDomModel, VDomRenderer } from '@jupyterlab/apputils';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { References } from 'myst-common';
 import { PageFrontmatter } from 'myst-frontmatter';
@@ -11,7 +11,7 @@ import {
   Theme,
   ThemeProvider
 } from '@myst-theme/providers';
-import { useParse } from 'myst-to-react';
+import { MyST } from 'myst-to-react';
 import React from 'react';
 import { UserExpressionsProvider } from './UserExpressionsProvider';
 import {
@@ -22,6 +22,7 @@ import {
 import { renderers } from './renderers';
 import { IUserExpressionMetadata } from './metadata';
 import { linkFactory } from './links';
+import { SanitizerProvider } from './SanitizerProvider';
 
 /**
  * The MIME type for Markdown.
@@ -97,6 +98,7 @@ export interface IMySTOptions {
   linkHandler?: IRenderMime.ILinkHandler;
   rendermime?: IRenderMimeRegistry;
   trusted?: boolean;
+  sanitizer?: ISanitizer;
 }
 
 /**
@@ -109,13 +111,15 @@ export class MySTWidget extends VDomRenderer<IMySTModel> {
    * @param options - The options for initializing the widget.
    */
   constructor(options: IMySTOptions) {
-    const { model, resolver, linkHandler, rendermime, trusted } = options;
+    const { model, resolver, linkHandler, rendermime, trusted, sanitizer } =
+      options;
     super(model);
 
     this._resolver = resolver;
     this._linkHandler = linkHandler;
     this._rendermime = rendermime;
     this._trusted = trusted;
+    this._sanitizer = sanitizer;
     this.addClass('myst');
 
     this._taskItemController = change => this._taskItemChanged.emit(change);
@@ -124,6 +128,7 @@ export class MySTWidget extends VDomRenderer<IMySTModel> {
   private _trusted?: boolean = false;
   private readonly _resolver?: IRenderMime.IResolver;
   private readonly _linkHandler?: IRenderMime.ILinkHandler;
+  private readonly _sanitizer?: IRenderMime.ISanitizer;
   private readonly _rendermime?: IRenderMimeRegistry;
   private readonly _taskItemChanged = new Signal<this, ITaskItemChange>(this);
   private readonly _taskItemController: ITaskItemController;
@@ -152,8 +157,6 @@ export class MySTWidget extends VDomRenderer<IMySTModel> {
     }
     const { references, frontmatter, mdast, expressions } = this.model;
 
-    const children = useParse(mdast || null, renderers);
-
     return (
       <TaskItemControllerProvider controller={this._taskItemController}>
         <ThemeProvider
@@ -161,21 +164,25 @@ export class MySTWidget extends VDomRenderer<IMySTModel> {
           Link={linkFactory(this._resolver, this._linkHandler)}
           renderers={renderers}
         >
-          <UserExpressionsProvider
-            expressions={expressions}
-            rendermime={this._rendermime}
-            trusted={this._trusted}
-          >
-            <TabStateProvider>
-              <ReferencesProvider
-                references={references}
-                frontmatter={frontmatter}
-              >
-                {frontmatter && <FrontmatterBlock frontmatter={frontmatter} />}
-                {children}
-              </ReferencesProvider>
-            </TabStateProvider>
-          </UserExpressionsProvider>
+          <SanitizerProvider sanitizer={this._sanitizer}>
+            <UserExpressionsProvider
+              expressions={expressions}
+              rendermime={this._rendermime}
+              trusted={this._trusted}
+            >
+              <TabStateProvider>
+                <ReferencesProvider
+                  references={references}
+                  frontmatter={frontmatter}
+                >
+                  {frontmatter && (
+                    <FrontmatterBlock frontmatter={frontmatter} />
+                  )}
+                  <MyST ast={mdast}></MyST>
+                </ReferencesProvider>
+              </TabStateProvider>
+            </UserExpressionsProvider>
+          </SanitizerProvider>
         </ThemeProvider>
       </TaskItemControllerProvider>
     );

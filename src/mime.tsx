@@ -18,7 +18,8 @@ export class RenderedMySTMarkdown
     super({
       model: undefined,
       resolver: options.resolver ?? undefined,
-      linkHandler: options.linkHandler ?? undefined
+      linkHandler: options.linkHandler ?? undefined,
+      sanitizer: options.sanitizer ?? undefined
     });
     this.resolver = options.resolver ?? undefined;
     this.node.dataset['mimeType'] = MIME_TYPE;

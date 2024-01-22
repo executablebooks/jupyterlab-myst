@@ -2,6 +2,7 @@ import React from 'react';
 import { NodeRenderer } from '@myst-theme/providers';
 import type { ListItem } from 'myst-spec-ext';
 import { useTaskItemController } from './TaskItemControllerProvider';
+import { MyST } from 'myst-to-react';
 
 function TaskItem({
   checked,
@@ -35,9 +36,15 @@ function TaskItem({
   );
 }
 
-export const listItem: NodeRenderer<ListItem> = (node, children) => {
+export const listItem: NodeRenderer<ListItem & { checked?: boolean }> = ({
+  node
+}) => {
   if (node.checked == null) {
-    return <li key={node.key}>{children}</li>;
+    return (
+      <li key={node.key}>
+        <MyST ast={node.children} />
+      </li>
+    );
   }
   return (
     <TaskItem
@@ -45,7 +52,7 @@ export const listItem: NodeRenderer<ListItem> = (node, children) => {
       checked={node.checked}
       line={node.position?.start.line}
     >
-      {children}
+      <MyST ast={node.children} />
     </TaskItem>
   );
 };

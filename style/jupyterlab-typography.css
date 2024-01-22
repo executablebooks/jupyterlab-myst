@@ -44,6 +44,10 @@
     margin-bottom: 0.5em;
   }
 
+  .myst hr {
+    border-top-width: 2px;
+  }
+
   .article {
     /* This is a required class currently in the hover-card */
     @apply myst;

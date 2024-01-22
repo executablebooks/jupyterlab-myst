@@ -9,10 +9,10 @@ import {
   getFrontmatter,
   GithubTransformer,
   glossaryPlugin,
-  htmlPlugin,
   keysPlugin,
   linksPlugin,
   mathPlugin,
+  reconstructHtmlTransform,
   ReferenceState,
   resolveReferencesPlugin,
   RRIDTransformer,
@@ -51,28 +51,25 @@ export interface IMySTExpressionsState {
 }
 
 export function markdownParse(text: string): Root {
-  const mdast = mystParse(text, {
-    directives: [
-      cardDirective,
-      gridDirective,
-      proofDirective,
-      ...tabDirectives,
-      ...exerciseDirectives
-    ],
-    roles: [evalRole]
-  });
+  const parseMyst = (content: string) => {
+    return mystParse(content, {
+      directives: [
+        cardDirective,
+        gridDirective,
+        proofDirective,
+        ...tabDirectives,
+        ...exerciseDirectives
+      ],
+      roles: [evalRole]
+    });
+  };
+
+  const mdast = parseMyst(text);
   // Parsing individually here requires that link and footnote references are contained to the cell
   // This is consistent with the current Jupyter markdown renderer
   unified()
-    .use(basicTransformationsPlugin)
-    .use(htmlPlugin, {
-      htmlHandlers: {
-        comment(h: any, node: any) {
-          const result = h(node, 'comment');
-          (result as any).value = node.value;
-          return result;
-        }
-      }
+    .use(basicTransformationsPlugin, {
+      parser: parseMyst
     })
     .runSync(mdast as any);
   return mdast as Root;
@@ -98,7 +95,7 @@ export async function processArticleMDAST(
     article: mdast as any
   };
 
-  const { frontmatter: frontmatterRaw } = getFrontmatter(mdast, {
+  const { frontmatter: frontmatterRaw } = getFrontmatter(file, mdast, {
     removeYaml: true,
     removeHeading: true
   });
@@ -126,6 +123,9 @@ export async function processArticleMDAST(
   // Go through all links and replace the source if they are local
   await internalLinksTransform(mdast, { resolver });
   await imageUrlSourceTransform(mdast, { resolver });
+
+  // Fix inline html
+  reconstructHtmlTransform(mdast);
 
   return {
     references,
@@ -159,6 +159,7 @@ export async function processNotebookMDAST(
     article: mdast as any
   };
   const { frontmatter: frontmatterRaw } = getFrontmatter(
+    file,
     // This is the first cell, which might have a YAML block or header.
     mdast.children[0] as any,
     {
@@ -190,6 +191,9 @@ export async function processNotebookMDAST(
     .runSync(mdast as any, file);
 
   await internalLinksTransform(mdast, { resolver });
+
+  // Fix inline html
+  reconstructHtmlTransform(mdast);
 
   if (file.messages.length > 0) {
     // TODO: better error messages in the future

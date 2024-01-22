@@ -4,3 +4,5 @@ node_modules
 **/package.json
 !/package.json
 jupyterlab_myst
+.*/
+docs/
