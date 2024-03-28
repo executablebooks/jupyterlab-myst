@@ -1,0 +1,31 @@
+# See docs at: https://mystmd.org/docs/mystjs/frontmatter
+version: 1
+project:
+  title: jupyterlab-myst
+  description: Write MyST in JupyterLab Notebooks. This extension replaces the default markdown rendering enabling the rich features of MyST to be used in Markdown cells.
+  keywords: []
+  authors: []
+  github: https://github.com/executablebooks/jupyterlab-myst
+  references:
+    python: https://docs.python.org/3.7/
+    jupyterbook: https://jupyterbook.org/en/stable/
+    guide: https://mystmd.org/guide/
+    spec: https://mystmd.org/spec/
+  abbreviations:
+    AST: Abstract Syntax Tree
+    DOI: Digital Object Identifier
+    MyST: Markedly Structured Text
+    CLI: Command Line Interface
+    HTML: Hypertext Markup Language
+    PDF: Portable Document Format
+    YAML: Yet Another Markup Language
+    REES: Reproducible Execution Environment Specification
+    RST: reStructuredText
+site:
+  template: book-theme
+  nav: []
+  actions:
+    - title: Learn More
+      url: https://mystmd.org/jupyterlab
+  domains:
+    - mystmd-jupyterlab.curve.space
